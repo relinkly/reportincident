@@ -615,17 +615,43 @@ const usernameInput = document.getElementById("username");
       }
     });
 
-    incidentForm.addEventListener("submit", (event) => {
-      if (!incidentForm.area.value.trim() || !incidentForm.description.value.trim()) {
-        alert("Please fill in all required fields.");
-        event.preventDefault();
-        return;
-      }
-      alert("Incident reported successfully.");
-      incidentForm.reset();
-      usernameInput.value = loggedInUser;
-      closeModal();
-    });
+   incidentForm.addEventListener("submit", async (event) => {
+  event.preventDefault(); // stop default submission
+
+  if (!incidentForm.area.value.trim() || !incidentForm.description.value.trim()) {
+    alert("Please fill in all required fields.");
+    return;
+  }
+
+  // If user uploaded images but they're not finished uploading yet
+  const files = Array.from(uploadInput.files);
+  const previewImages = previewContainer.querySelectorAll("img");
+  
+  // If uploaded images exist but no URLs saved yet, wait for uploads
+  if (files.length > 0 && uploadedImageUrls.length < files.length) {
+    alert("Please wait for all images to finish uploading...");
+    return;
+  }
+
+  // If camera was used and an imageDataURL exists but no ImgBB URL
+  if (canvas.style.display === "block" && imageDataURL && imgUrlInput.value.trim() === "") {
+    const cameraUploadUrl = await uploadToImgbb(imageDataURL, loggedInUser);
+    if (cameraUploadUrl) {
+      imgUrlInput.value = cameraUploadUrl;
+    } else {
+      alert("Failed to upload captured image.");
+      return;
+    }
+  }
+
+  // Now everything is uploaded → submit form
+  alert("Incident reported successfully.");
+  incidentForm.submit(); // Submit form programmatically
+  incidentForm.reset();
+  usernameInput.value = loggedInUser;
+  closeModal();
+});
+
 
 
     captureBtn.addEventListener("click", async () => {
@@ -760,6 +786,7 @@ if (logoutBtn) {
 </body>
 
 </html>
+
 
 
 
