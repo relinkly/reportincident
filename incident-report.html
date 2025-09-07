@@ -485,7 +485,17 @@ img {
   object-fit: contain;
 }
 
-
+@media (max-width: 600px) {
+  body {
+    padding: 20px 10px;  /* reduce padding */
+  }
+  
+  main {
+    padding: 20px;      /* reduce padding */
+    max-width: 100%;    /* allow full width */
+    border-radius: 8px; /* smaller border-radius */
+  }
+}
 
 
   </style>
@@ -1112,4 +1122,5 @@ reportBtn.addEventListener("click", openModal);
 </body>
 
 </html>
+
 
