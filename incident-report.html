@@ -599,23 +599,25 @@ const usernameInput = document.getElementById("username");
     }
 
     function closeModal() {
-      modal.classList.remove("active");
-      modal.setAttribute("aria-hidden", "true");
-      reportBtn.setAttribute("aria-expanded", "false");
-      if (lastFocusedElement) lastFocusedElement.focus();
-      document.removeEventListener("keydown", trapFocus);
+  modal.classList.remove("active");
+  modal.setAttribute("aria-hidden", "true");
+  reportBtn.setAttribute("aria-expanded", "false");
+  if (lastFocusedElement) lastFocusedElement.focus();
+  document.removeEventListener("keydown", trapFocus);
 
-      stopCamera();
-    }
+  stopCamera();
 
-    reportBtn.addEventListener("click", openModal);
-    closeModalBtn.addEventListener("click", closeModal);
+  // 🔄 Reset preview image and file input
+  const preview = document.getElementById('preview');
+  const fileInput = document.getElementById('uploadImages');
+  const imgUrlInput = document.getElementById("imgUrlInput");
 
-    modal.addEventListener("click", (event) => {
-      if (event.target === modal) {
-        closeModal();
-      }
-    });
+  preview.src = '';
+  preview.style.display = 'none';
+  fileInput.value = ''; // reset the file input
+  imgUrlInput.value = ''; // reset hidden input value
+}
+
 
     incidentForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -744,6 +746,25 @@ async function uploadToImgbb(base64Image, username) {
   }
 }
 
+// Upload image and preview it
+document.getElementById('uploadImages').addEventListener('change', function () {
+  const file = this.files[0];
+  const preview = document.getElementById('preview');
+
+  if (file && file.type.startsWith('image/')) {
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+    };
+
+    reader.readAsDataURL(file);
+  } else {
+    preview.src = '';
+    preview.style.display = 'none';
+  }
+});
 
 
 
@@ -753,4 +774,5 @@ async function uploadToImgbb(base64Image, username) {
 </body>
 
 </html>
+
 
