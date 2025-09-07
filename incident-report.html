@@ -437,15 +437,26 @@ img {
 
   <!-- Upload Input -->
   <div class="mb-3">
-    <label for="uploadImages" class="block mb-1 font-medium text-gray-700">Upload Images</label>
-    <!-- Replace your current file input with ID for easier access -->
+    <!-- Choose Upload or Capture -->
+<div class="flex gap-4 mb-4">
+  <button type="button" id="uploadImageBtn" class="bg-indigo-600 text-white px-4 py-2 rounded text-sm hover:bg-indigo-700 transition">
+    Upload Image
+  </button>
+  <button type="button" id="openCameraBtn" class="bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700 transition">
+    Take Photo
+  </button>
+</div>
+
+<!-- Upload File Input (Hidden initially) -->
 <input
   type="file"
   id="uploadImages"
   name="uploadImages"
   accept="image/*"
   class="block w-full text-sm text-gray-600"
+  style="display: none;"
 />
+
 
   </div>
   
@@ -746,6 +757,29 @@ async function uploadToImgbb(base64Image, username) {
   }
 }
 
+
+// Show file input only when "Upload Image" is clicked
+document.getElementById("uploadImageBtn").addEventListener("click", () => {
+  document.getElementById("uploadImages").style.display = "block";
+  document.getElementById("camera").style.display = "none";
+  document.getElementById("captureBtn").style.display = "none";
+  document.getElementById("retakeBtn").style.display = "none";
+  document.getElementById("snapshot").style.display = "none";
+  stopCamera();
+});
+
+// Start camera only when "Take Photo" is clicked
+document.getElementById("openCameraBtn").addEventListener("click", () => {
+  document.getElementById("uploadImages").style.display = "none";
+  document.getElementById("preview").style.display = "none";
+  document.getElementById("camera").style.display = "block";
+  document.getElementById("captureBtn").style.display = "inline-block";
+  document.getElementById("retakeBtn").style.display = "none";
+  document.getElementById("snapshot").style.display = "none";
+  document.getElementById("imgUrlInput").value = "";
+  startCamera();
+});
+
 // Upload image and preview it
 document.getElementById('uploadImages').addEventListener('change', function () {
   const file = this.files[0];
@@ -777,6 +811,7 @@ reportBtn.addEventListener("click", openModal);
 </body>
 
 </html>
+
 
 
 
