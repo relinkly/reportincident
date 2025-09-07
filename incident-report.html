@@ -1,349 +1,364 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Report An Incident</title>
+  <title>KPI Dashboards Menu</title>
   <style>
-/* ===== Reset & Base Styles ===== */
-*, *::before, *::after {
-  box-sizing: border-box;
-}
+    /* Reset and Global Styles */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
 
-body {
-  margin: 0;
-  padding: 40px 20px 40px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f0f3f2;
-  color: #2e3e2f;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1.6;
-}
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f2f5f3;
+      color: #2e3e2f;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 60px 20px 40px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    main {
+      background: #fff;
+      max-width: 900px;
+      width: 100%;
+      padding: 48px 40px 56px;
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(46, 62, 47, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+      user-select: none;
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 2.4rem;
+      color: #2a4d3a;
+      margin: 0;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
 
 
-/* ===== Layout ===== */
-main {
-  background: #fff;
-  max-width: 880px;
-  width: 100%;
-  padding: 40px;
-  border-radius: 16px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
-  margin: auto;
-}
+    .logout-btn {
+      background: #2a4d3a;
+      border: none;
+      padding: 16px 56px;
+      border-radius: 28px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #fff;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+      align-self: center;
+      box-shadow: 0 3px 9px rgba(42, 77, 58, 0.35);
+    }
 
-/* ===== Typography ===== */
-header h1 {
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: #2a4d3a;
-  text-align: center;
-  margin-bottom: 0.5rem;
-  letter-spacing: 0.04em;
-}
+    .logout-btn:hover,
+    .logout-btn:focus {
+      background: #1f3a2a;
+      box-shadow: 0 5px 14px rgba(31, 58, 42, 0.5);
+      outline: none;
+      transform: translateY(-3px);
+    }
 
-section {
-  font-size: 1rem;
-  color: #3e4e3f;
-}
+    .logout-btn:focus-visible {
+      outline: 3px solid #1f3a2a;
+      outline-offset: 3px;
+    }
 
-header h1 {
-  font-size: 2.4rem;
-  margin-bottom: 0.75rem;
-}
+    /* Modal Overlay */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(42, 77, 58, 0.45);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 32px 20px;
+      z-index: 1100;
+      backdrop-filter: blur(6px);
+      transition: opacity 0.3s ease;
+    }
 
-section h2 {
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
-}
+    .modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
 
-/* ===== Buttons ===== */
-button,
-input[type="submit"],
-#reportBtn,
-.logout-btn,
-#captureBtn,
-#retakeBtn {
+    /* Modal Window */
+    .modal {
+      background-color: #fff;
+      border-radius: 14px;
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 48px 44px 56px;
+      position: relative;
+      color: #2e3e2f;
+      font-size: 1rem;
+      box-shadow: 0 12px 32px rgba(46, 62, 47, 0.15);
+      scroll-behavior: smooth;
+    }
+
+    .modal h2 {
+      margin: 0 0 36px;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #3a7d44;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      user-select: none;
+    }
+
+    .close-modal-btn {
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      background: transparent;
+      border: none;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #3a7d44;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.25s ease;
+      line-height: 1;
+    }
+
+    .close-modal-btn:hover,
+    .close-modal-btn:focus {
+      color: #1f3a2a;
+      outline: none;
+    }
+
+    .close-modal-btn:focus-visible {
+      outline: 3px solid #1f3a2a;
+      outline-offset: 3px;
+    }
+
+    /* Form */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    label {
+      font-weight: 600;
+      color: #4b5c4a;
+      letter-spacing: 0.06em;
+      user-select: none;
+      font-size: 1rem;
+    }
+
+    input[type="text"],
+    textarea {
+      padding: 16px 18px;
+      border-radius: 12px;
+      border: 1.5px solid #cbd5d1;
+      font-size: 1rem;
+      font-family: inherit;
+      color: #2e3e2f;
+      resize: vertical;
+      min-height: 48px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.07);
+      outline-offset: 2px;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      border-color: #3a7d44;
+      outline: none;
+      box-shadow: 0 0 16px rgba(58, 125, 68, 0.35);
+      background-color: #fff;
+    }
+
+    input[readonly] {
+      background-color: #f6f8f6;
+      border-color: #a3b5a8;
+      cursor: default;
+      color: #71806d;
+      box-shadow: none;
+    }
+
+    button[type="submit"] {
+      background: #2a4d3a;
+      border: none;
+      padding: 18px 0;
+      border-radius: 28px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #fff;
+      cursor: pointer;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      user-select: none;
+      transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+      margin-top: 4px;
+      box-shadow: 0 6px 16px rgba(42, 77, 58, 0.35);
+      align-self: stretch;
+    }
+
+    button[type="submit"]:hover,
+    button[type="submit"]:focus {
+      background: #1f3a2a;
+      box-shadow: 0 8px 20px rgba(31, 58, 42, 0.5);
+      transform: translateY(-3px);
+      outline: none;
+    }
+
+    button[type="submit"]:focus-visible {
+      outline: 3px solid #1f3a2a;
+      outline-offset: 3px;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      main {
+        padding: 36px 24px 40px;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(46, 62, 47, 0.08);
+      }
+
+      h1 {
+        font-size: 2rem;
+        letter-spacing: 0.1em;
+      }
+
+      .dashboards {
+        grid-template-columns: 1fr;
+        gap: 22px;
+      }
+
+      .dashboards a {
+        font-size: 1.1rem;
+        padding: 18px 22px;
+      }
+
+      .dashboards a::before {
+        font-size: 1.4rem;
+        margin-right: 10px;
+      }
+
+      #openModalBtn {
+        padding: 14px 48px;
+        font-size: 1.1rem;
+        margin-bottom: 40px;
+      }
+
+      .logout-btn {
+        font-size: 1rem;
+        padding: 14px 48px;
+      }
+
+      .modal {
+        padding: 36px 32px 40px;
+        max-height: 85vh;
+      }
+
+      .modal h2 {
+        font-size: 1.7rem;
+        margin-bottom: 30px;
+      }
+
+      form {
+        gap: 20px;
+      }
+    }
+
+    video, img {
+      max-width: 300px;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    #captureBtn, #retakeBtn {
+  background: #3a7d44;
   border: none;
-  border-radius: 30px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.15s ease, box-shadow 0.3s ease;
-}
-
-/* Report Button */
-#reportBtn {
-  background: #3a7d44;
-  color: white;
-  padding: 12px 32px;
-  letter-spacing: 0.05em;
-  box-shadow: 0 4px 12px rgba(58, 125, 68, 0.3);
-}
-
-#reportBtn:hover {
-  background: #2a5931;
-  transform: translateY(-2px);
-}
-
-/* Logout Button */
-.logout-btn {
-  background: #f44336;
-  color: white;
-  padding: 12px 28px;
-  align-self: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.logout-btn:hover {
-  background: #d32f2f;
-  transform: translateY(-2px);
-}
-
-/* ===== Modal ===== */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(42, 77, 58, 0.5);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  padding: 32px 20px;
-  z-index: 1000;
-  backdrop-filter: blur(4px);
-}
-
-.modal-overlay.active {
-  display: flex;
-}
-
-.modal {
-  background: #fff;
-  border-radius: 16px;
-  max-width: 500px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  padding: 36px 32px;
-  position: relative;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-}
-
-.modal h2 {
-  font-size: 1.7rem;
-  font-weight: 700;
-  color: #3a7d44;
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.close-modal-btn {
-  position: absolute;
-  top: 14px;
-  right: 20px;
-  background: none;
-  border: none;
-  font-size: 1.8rem;
-  color: #3a7d44;
-  cursor: pointer;
-}
-
-.close-modal-btn:hover {
-  color: #1f3a2a;
-}
-
-/* ===== Form Styles ===== */
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-form label {
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: #4a5e4a;
-  margin-bottom: 6px;
-}
-
-input[type="text"],
-textarea {
-  padding: 12px 14px;
-  border-radius: 10px;
-  border: 1.5px solid #cbd5d1;
-  width: 100%;
-  font-size: 1rem;
-  background: #fdfdfd;
-  transition: border 0.3s ease, box-shadow 0.3s ease;
-}
-
-input:focus,
-textarea:focus {
-  border-color: #3a7d44;
-  box-shadow: 0 0 8px rgba(58, 125, 68, 0.3);
-  outline: none;
-}
-
-input[readonly] {
-  background: #f4f7f5;
-  color: #6b7a6a;
-}
-
-form button[type="submit"] {
-  background: #3a7d44;
-  color: white;
-  padding: 14px;
-  margin-top: 10px;
-  border-radius: 30px;
-  box-shadow: 0 4px 14px rgba(58, 125, 68, 0.35);
-}
-
-form button[type="submit"]:hover {
-  background: #2a5931;
-  transform: translateY(-2px);
-}
-
-/* ===== Capture Image Area ===== */
-video,
-img {
-  width: 100%;
-  max-width: 300px;
-  max-height: 300px;
-  object-fit: cover;
-  border-radius: 12px;
-  display: block;
-  margin-bottom: 10px;
-}
-
-#captureBtn,
-#retakeBtn {
-  background: #3a7d44;
-  color: white;
   padding: 12px 36px;
+  border-radius: 28px;
+  color: #fff;
   font-weight: 700;
   font-size: 1rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  border-radius: 28px;
+  cursor: pointer;
   user-select: none;
-  margin-right: 10px;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
   box-shadow: 0 4px 12px rgba(58, 125, 68, 0.4);
+  margin-right: 10px;
 }
 
-#retakeBtn {
-  background: #607d3b;
-}
-
-#captureBtn:hover,
-#retakeBtn:hover,
-#captureBtn:focus,
-#retakeBtn:focus {
+#captureBtn:hover, #retakeBtn:hover,
+#captureBtn:focus, #retakeBtn:focus {
   background: #2a5931;
-  transform: translateY(-3px);
   box-shadow: 0 6px 16px rgba(42, 89, 49, 0.5);
+  outline: none;
+  transform: translateY(-3px);
 }
 
-#captureBtn:focus-visible,
-#retakeBtn:focus-visible {
+#captureBtn:focus-visible, #retakeBtn:focus-visible {
   outline: 3px solid #2a5931;
   outline-offset: 3px;
 }
 
-/* ===== Responsive Design ===== */
-@media (max-width: 600px) {
-  main {
-    padding: 32px 24px;
-  }
-
-  header h1 {
-    font-size: 1.8rem;
-  }
-
-  .modal {
-    padding: 24px;
-  }
-
-  .modal h2 {
-    font-size: 1.4rem;
-  }
-
-  .logout-btn,
-  #reportBtn {
-    width: 100%;
-  }
-}
-
-.button-column {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  margin-top: 24px;
-}
-
-@media (min-width: 640px) {
-  .button-column {
-    flex-direction: row;
-    justify-content: center;
-  }
-}
-
-
-.top-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  z-index: 1000;
-}
-
-.logo-top-left {
-  position: fixed;
-  top: 16px;
-  left: 10px;
-  right: 10px;
-  height: 24px;      /* sets height */
-  object-fit: contain;
-}
 
 
 
-.logout-btn-top-right {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: #f44336;
-  color: white;
-  padding: 10px 20px;
-  font-weight: 600;
-  border-radius: 9999px;
-  font-size: 0.9rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: background 0.3s ease, transform 0.2s ease;
-  z-index: 1000;
-}
 
-.logout-btn-top-right:hover {
-  background: #d32f2f;
-  transform: translateY(-2px);
-}
 
   </style>
 </head>
 <body>
 
-<button id="logoutBtn" class="logout-btn-top-right">Logout</button>
 
+    <button
+    id="backBtn"
+    type="button"
+    aria-label="Go back to menu"
+    style="
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: #2a4d3a;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 28px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 4px 12px rgba(42, 77, 58, 0.4);
+      transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+      z-index: 9999;
+    "
+    onmouseover="this.style.background='#1f3a2a'; this.style.boxShadow='0 6px 16px rgba(31, 58, 42, 0.5)';"
+    onmouseout="this.style.background='#2a4d3a'; this.style.boxShadow='0 4px 12px rgba(42, 77, 58, 0.4)';"
+  >
+    Back
+  </button>
 <main class="max-w-3xl mx-auto px-4 py-6">
   <header class="text-center mb-6">
     <h1 class="text-2xl font-semibold">Report An Incident</h1>
@@ -364,16 +379,14 @@ img {
     <p>Please provide as much detail as possible when submitting an incident to ensure timely resolution.</p>
   </section>
 
- <div class="button-column">
-  <button 
-    id="reportBtn"
-    class="px-5 py-3 bg-green-700 text-white text-sm font-semibold rounded-full shadow-md hover:bg-green-800 transition"
-  >
-    Report an Incident
-  </button>
-  
-</div>
-
+  <div class="mt-4">
+    <button 
+      id="reportBtn"
+      class="px-4 py-2 bg-indigo-600 text-sm font-medium text-white rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 transition duration-200"
+    >
+      Report an Incident
+    </button>
+  </div>
 
   <!-- Modal Section -->
   <div class="modal-overlay" id="incidentModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
@@ -431,44 +444,50 @@ img {
     ></textarea>
   </div>
 
-<!-- Capture / Upload Image Section -->
-<fieldset class="border p-3 rounded">
-  <legend class="font-medium text-gray-700 mb-2">Upload or Capture Image(s)</legend>
+  <!-- Capture Image Section -->
+  <fieldset class="border p-3 rounded">
+    <legend class="font-medium text-gray-700 mb-2">Capture Image</legend>
 
-  <!-- Upload Input -->
-  <div class="mb-3">
-    <label for="uploadImages" class="block mb-1 font-medium text-gray-700">Upload Images</label>
-    <input
-      type="file"
-      id="uploadImages"
-      name="images[]"
-      accept="image/*"
-      multiple
-      class="block w-full text-sm text-gray-600"
-    />
-  </div>
-  
- <!-- Camera -->
-  <video id="camera" autoplay playsinline class="w-full rounded border mb-2"></video>
-  <canvas id="snapshot" style="display: none;"></canvas>
+    <video
+      id="camera"
+      autoplay
+      playsinline
+      class="w-full rounded border mb-2"
+    ></video>
 
-  <!-- Preview Area -->
-  <div id="preview-container" class="mt-2 grid grid-cols-2 gap-2">
-    <img id="preview" src="" alt="Image preview" style="display: none;" class="rounded border" />
-  </div>
+    <canvas id="snapshot" style="display: none;"></canvas>
 
-  <div class="flex gap-3 mt-3">
-    <button type="button" id="captureBtn" class="bg-gray-700 text-white px-3 py-2 rounded text-sm hover:bg-gray-800 transition">
-      Capture Photo
-    </button>
-    <button type="button" id="retakeBtn" style="display: none;" class="bg-gray-400 text-white px-3 py-2 rounded text-sm hover:bg-gray-500 transition">
-      Retake
-    </button>
-  </div>
-</fieldset>
+    <div id="preview-container" class="mt-2">
+      <img
+        id="preview"
+        src=""
+        alt="Image preview"
+        style="display: none;"
+        class="rounded border w-full"
+      />
+    </div>
+
+    <div class="flex gap-3 mt-3">
+      <button
+        type="button"
+        id="captureBtn"
+        class="bg-gray-700 text-white px-3 py-2 rounded text-sm hover:bg-gray-800 transition"
+      >
+        Capture Photo
+      </button>
+      <button
+        type="button"
+        id="retakeBtn"
+        style="display: none;"
+        class="bg-gray-400 text-white px-3 py-2 rounded text-sm hover:bg-gray-500 transition"
+      >
+        Retake
+      </button>
+    </div>
+  </fieldset>
 
   <!-- Hidden image filename input -->
-  <input type="hidden" id="imgUrlInput" name="entry.1179564217" value="">
+  <input type="hidden" id="imgFilenameInput" name="entry.1179564217" value="">
 
   <!-- Submit button -->
   <button
@@ -482,17 +501,8 @@ img {
       <iframe name="hidden_iframe" style="display:none;"></iframe>
     </div>
   </div>
-
-
-
-
 </main>
 
-<script>
-  if (!localStorage.getItem("loggedIn")) {
-    window.location.href = "index.html"; // Kick unauthorized users out
-  }
-</script>
 
 <script>
 const reportBtn = document.getElementById("reportBtn");
@@ -711,11 +721,18 @@ const usernameInput = document.getElementById("username");
     }
 
 
-
+  document.getElementById('backBtn').addEventListener('click', () => {
+      if (localStorage.getItem('loggedIn')) {
+        window.location.href = 'menu.html';
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
 
 </script>
 
 </body>
 
 </html>
+
 
