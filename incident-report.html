@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KPI Dashboards Menu</title>
+  <style>
+    /* Reset and Global Styles */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f2f5f3;
+      color: #2e3e2f;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 60px 20px 40px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    main {
+      background: #fff;
+      max-width: 900px;
+      width: 100%;
+      padding: 48px 40px 56px;
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(46, 62, 47, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+      user-select: none;
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 2.4rem;
+      color: #2a4d3a;
+      margin: 0;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+
+
+    .logout-btn {
+      background: #2a4d3a;
+      border: none;
+      padding: 16px 56px;
+      border-radius: 28px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #fff;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+      align-self: center;
+      box-shadow: 0 3px 9px rgba(42, 77, 58, 0.35);
+    }
+
+    .logout-btn:hover,
+    .logout-btn:focus {
+      background: #1f3a2a;
+      box-shadow: 0 5px 14px rgba(31, 58, 42, 0.5);
+      outline: none;
+      transform: translateY(-3px);
+    }
+
+    .logout-btn:focus-visible {
+      outline: 3px solid #1f3a2a;
+      outline-offset: 3px;
+    }
+
+    /* Modal Overlay */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(42, 77, 58, 0.45);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 32px 20px;
+      z-index: 1100;
+      backdrop-filter: blur(6px);
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    /* Modal Window */
+    .modal {
+      background-color: #fff;
+      border-radius: 14px;
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 48px 44px 56px;
+      position: relative;
+      color: #2e3e2f;
+      font-size: 1rem;
+      box-shadow: 0 12px 32px rgba(46, 62, 47, 0.15);
+      scroll-behavior: smooth;
+    }
+
+    .modal h2 {
+      margin: 0 0 36px;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #3a7d44;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      user-select: none;
+    }
+
+    .close-modal-btn {
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      background: transparent;
+      border: none;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #3a7d44;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.25s ease;
+      line-height: 1;
+    }
+
+    .close-modal-btn:hover,
+    .close-modal-btn:focus {
+      color: #1f3a2a;
+      outline: none;
+    }
+
+    .close-modal-btn:focus-visible {
+      outline: 3px solid #1f3a2a;
+      outline-offset: 3px;
+    }
+
+    /* Form */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    label {
+      font-weight: 600;
+      color: #4b5c4a;
+      letter-spacing: 0.06em;
+      user-select: none;
+      font-size: 1rem;
+    }
+
+    input[type="text"],
+    textarea {
+      padding: 16px 18px;
+      border-radius: 12px;
+      border: 1.5px solid #cbd5d1;
+      font-size: 1rem;
+      font-family: inherit;
+      color: #2e3e2f;
+      resize: vertical;
+      min-height: 48px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.07);
+      outline-offset: 2px;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      border-color: #3a7d44;
+      outline: none;
+      box-shadow: 0 0 16px rgba(58, 125, 68, 0.35);
+      background-color: #fff;
+    }
+
+    input[readonly] {
+      background-color: #f6f8f6;
+      border-color: #a3b5a8;
+      cursor: default;
+      color: #71806d;
+      box-shadow: none;
+    }
+
+    button[type="submit"] {
+      background: #2a4d3a;
+      border: none;
+      padding: 18px 0;
+      border-radius: 28px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #fff;
+      cursor: pointer;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      user-select: none;
+      transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+      margin-top: 4px;
+      box-shadow: 0 6px 16px rgba(42, 77, 58, 0.35);
+      align-self: stretch;
+    }
+
+    button[type="submit"]:hover,
+    button[type="submit"]:focus {
+      background: #1f3a2a;
+      box-shadow: 0 8px 20px rgba(31, 58, 42, 0.5);
+      transform: translateY(-3px);
+      outline: none;
+    }
+
+    button[type="submit"]:focus-visible {
+      outline: 3px solid #1f3a2a;
+      outline-offset: 3px;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      main {
+        padding: 36px 24px 40px;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(46, 62, 47, 0.08);
+      }
+
+      h1 {
+        font-size: 2rem;
+        letter-spacing: 0.1em;
+      }
+
+      .dashboards {
+        grid-template-columns: 1fr;
+        gap: 22px;
+      }
+
+      .dashboards a {
+        font-size: 1.1rem;
+        padding: 18px 22px;
+      }
+
+      .dashboards a::before {
+        font-size: 1.4rem;
+        margin-right: 10px;
+      }
+
+      #openModalBtn {
+        padding: 14px 48px;
+        font-size: 1.1rem;
+        margin-bottom: 40px;
+      }
+
+      .logout-btn {
+        font-size: 1rem;
+        padding: 14px 48px;
+      }
+
+      .modal {
+        padding: 36px 32px 40px;
+        max-height: 85vh;
+      }
+
+      .modal h2 {
+        font-size: 1.7rem;
+        margin-bottom: 30px;
+      }
+
+      form {
+        gap: 20px;
+      }
+    }
+
+    video, img {
+      max-width: 300px;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    #captureBtn, #retakeBtn {
+  background: #3a7d44;
+  border: none;
+  padding: 12px 36px;
+  border-radius: 28px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+  box-shadow: 0 4px 12px rgba(58, 125, 68, 0.4);
+  margin-right: 10px;
+}
+
+#captureBtn:hover, #retakeBtn:hover,
+#captureBtn:focus, #retakeBtn:focus {
+  background: #2a5931;
+  box-shadow: 0 6px 16px rgba(42, 89, 49, 0.5);
+  outline: none;
+  transform: translateY(-3px);
+}
+
+#captureBtn:focus-visible, #retakeBtn:focus-visible {
+  outline: 3px solid #2a5931;
+  outline-offset: 3px;
+}
+
+
+
+
+
+
+  </style>
+</head>
+<body>
+
+
+<main class="max-w-3xl mx-auto px-4 py-6">
+  <header class="text-center mb-6">
+    <h1 class="text-2xl font-semibold">Report An Incident</h1>
+  </header>
+
+  <section class="text-left space-y-3 text-sm text-gray-800">
+    <h2 class="text-base font-semibold">What Can Be Reported</h2>
+    <p>This section is intended for reporting any incidents that directly impact or hinder sales activities. These may include, but are not limited to:</p>
+
+    <ul class="list-disc list-inside space-y-1">
+      <li><strong>Network or service outages</strong> affecting customer experience or new activations</li>
+      <li><strong>System or portal issues</strong> (e.g. CRM errors, login problems)</li>
+      <li><strong>SIM/MBB Device stock shortages</strong> or delays in inventory replenishment</li>
+      <li><strong>Customer complaints</strong> that are recurring or unresolved and affecting sales</li>
+      <li><strong>Weather Impact</strong> or similar issues directly effecting sales</li>
+    </ul>
+
+    <p>Please provide as much detail as possible when submitting an incident to ensure timely resolution.</p>
+  </section>
+
+  <div class="mt-4">
+    <button 
+      id="reportBtn"
+      class="px-4 py-2 bg-indigo-600 text-sm font-medium text-white rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 transition duration-200"
+    >
+      Report an Incident
+    </button>
+  </div>
+
+  <!-- Modal Section -->
+  <div class="modal-overlay" id="incidentModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+    <div class="modal bg-white p-6 rounded-md shadow-md w-full max-w-lg mx-auto mt-8 space-y-4">
+      <button class="close-modal-btn text-xl float-right" aria-label="Close incident report form" type="button">&times;</button>
+
+      <h2 id="modalTitle" class="text-lg font-semibold mb-4">Incident Reporting</h2>
+
+     <form
+  id="incidentForm"
+  action="https://docs.google.com/forms/d/e/1FAIpQLSdrmFNeQAUEjYGOYgHWOZCmEgtGknaXroWTD0keUro6DHocMg/formResponse"
+  method="POST"
+  target="hidden_iframe"
+  onsubmit="submitted=true;"
+  novalidate
+  class="space-y-4 text-sm"
+>
+  <!-- Username (Read-only) -->
+  <div>
+    <label for="username" class="block mb-1 font-medium text-gray-700">Username</label>
+    <input
+      type="text"
+      id="username"
+      name="entry.2120015252"
+      readonly
+      class="w-full border rounded px-3 py-2 bg-gray-100 text-gray-700 cursor-not-allowed"
+    />
+  </div>
+
+  <!-- Area Input -->
+  <div>
+    <label for="area" class="block mb-1 font-medium text-gray-700">Area</label>
+    <input
+      type="text"
+      id="area"
+      name="entry.1059382315"
+      placeholder="Enter area"
+      required
+      aria-required="true"
+      class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-indigo-500"
+    />
+  </div>
+
+  <!-- Description -->
+  <div>
+    <label for="description" class="block mb-1 font-medium text-gray-700">Description</label>
+    <textarea
+      id="description"
+      name="entry.1887453304"
+      rows="4"
+      placeholder="Describe the incident"
+      required
+      aria-required="true"
+      class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-indigo-500"
+    ></textarea>
+  </div>
+
+  <!-- Capture Image Section -->
+  <fieldset class="border p-3 rounded">
+    <legend class="font-medium text-gray-700 mb-2">Capture Image</legend>
+
+    <video
+      id="camera"
+      autoplay
+      playsinline
+      class="w-full rounded border mb-2"
+    ></video>
+
+    <canvas id="snapshot" style="display: none;"></canvas>
+
+    <div id="preview-container" class="mt-2">
+      <img
+        id="preview"
+        src=""
+        alt="Image preview"
+        style="display: none;"
+        class="rounded border w-full"
+      />
+    </div>
+
+    <div class="flex gap-3 mt-3">
+      <button
+        type="button"
+        id="captureBtn"
+        class="bg-gray-700 text-white px-3 py-2 rounded text-sm hover:bg-gray-800 transition"
+      >
+        Capture Photo
+      </button>
+      <button
+        type="button"
+        id="retakeBtn"
+        style="display: none;"
+        class="bg-gray-400 text-white px-3 py-2 rounded text-sm hover:bg-gray-500 transition"
+      >
+        Retake
+      </button>
+    </div>
+  </fieldset>
+
+  <!-- Hidden image filename input -->
+  <input type="hidden" id="imgFilenameInput" name="entry.1179564217" value="">
+
+  <!-- Submit button -->
+  <button
+    type="submit"
+    class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded text-sm hover:bg-indigo-700 transition"
+  >
+    Submit Incident
+  </button>
+</form>
+
+      <iframe name="hidden_iframe" style="display:none;"></iframe>
+    </div>
+  </div>
+
+  <button id="logoutBtn" class="logout-btn">Logout</button>
+
+</main>
+
+<script>
+  if (!localStorage.getItem("loggedIn")) {
+    window.location.href = "index.html"; // Kick unauthorized users out
+  }
+</script>
+
+<script>
+const reportBtn = document.getElementById("reportBtn");
+
+const usernameInput = document.getElementById("username");
+    const loggedInUser = localStorage.getItem("username") || "";
+    const modal = document.getElementById("incidentModal");
+    
+    const closeModalBtn = modal.querySelector(".close-modal-btn");
+    const incidentForm = document.getElementById("incidentForm");
+
+    const video = document.getElementById("camera");
+    const canvas = document.getElementById("snapshot");
+    const captureBtn = document.getElementById("captureBtn");
+    const retakeBtn = document.getElementById("retakeBtn");
+
+    usernameInput.value = loggedInUser;
+
+    const focusableSelectors = [
+      'a[href]',
+      'area[href]',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      'textarea:not([disabled])',
+      'button:not([disabled])',
+      'iframe',
+      'object',
+      'embed',
+      '[contenteditable]',
+      '[tabindex]:not([tabindex="-1"])'
+    ];
+
+    let lastFocusedElement = null;
+    let imageDataURL = null;
+    let stream = null;
+
+    function trapFocus(event) {
+      const focusableElements = modal.querySelectorAll(focusableSelectors.join(","));
+      if (focusableElements.length === 0) return;
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (event.key === "Tab") {
+        if (event.shiftKey) {
+          if (document.activeElement === firstElement) {
+            event.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            event.preventDefault();
+            firstElement.focus();
+          }
+        }
+      }
+    }
+
+    async function startCamera() {
+      try {
+        // Use back camera:
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+        video.srcObject = stream;
+      } catch (err) {
+        alert("Could not access the camera. Please allow camera permissions.");
+      }
+    }
+
+
+    function stopCamera() {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+        video.srcObject = null;
+      }
+    }
+
+    function openModal() {
+      lastFocusedElement = document.activeElement;
+      modal.classList.add("active");
+      modal.setAttribute("aria-hidden", "false");
+      reportBtn.setAttribute("aria-expanded", "true");
+
+      const focusableElements = modal.querySelectorAll(focusableSelectors.join(","));
+      if (focusableElements.length) {
+        focusableElements[0].focus();
+      }
+      document.addEventListener("keydown", trapFocus);
+
+      startCamera();
+
+      // Reset UI states
+      imageDataURL = null;
+      video.style.display = "block";
+      canvas.style.display = "none";
+      captureBtn.style.display = "inline-block";
+      retakeBtn.style.display = "none";
+
+      const imgUrlInput = document.getElementById("imgUrlInput");
+      if (imgUrlInput) imgUrlInput.value = "";
+
+    }
+
+    function closeModal() {
+      modal.classList.remove("active");
+      modal.setAttribute("aria-hidden", "true");
+      reportBtn.setAttribute("aria-expanded", "false");
+      if (lastFocusedElement) lastFocusedElement.focus();
+      document.removeEventListener("keydown", trapFocus);
+
+      stopCamera();
+    }
+
+    reportBtn.addEventListener("click", openModal);
+    closeModalBtn.addEventListener("click", closeModal);
+
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) {
+        closeModal();
+      }
+    });
+
+    incidentForm.addEventListener("submit", (event) => {
+      if (!incidentForm.area.value.trim() || !incidentForm.description.value.trim()) {
+        alert("Please fill in all required fields.");
+        event.preventDefault();
+        return;
+      }
+      alert("Incident reported successfully.");
+      incidentForm.reset();
+      usernameInput.value = loggedInUser;
+      closeModal();
+    });
+
+
+    captureBtn.addEventListener("click", async () => {
+      const context = canvas.getContext("2d");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      imageDataURL = canvas.toDataURL("image/png");
+      video.style.display = "none";
+      canvas.style.display = "block";
+      captureBtn.style.display = "none";
+      retakeBtn.style.display = "inline-block";
+
+      stopCamera();
+
+      // Create timestamp string
+      const now = new Date();
+      const pad = (n) => (n < 10 ? '0' + n : n);
+      const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+
+      const filename = `${loggedInUser}_${timestamp}.png`;
+
+      const imgFilenameInput = document.getElementById("imgFilenameInput");
+      if (imgFilenameInput) imgFilenameInput.value = filename;
+
+      const uploadedImageUrl = await uploadToImgbb(imageDataURL, loggedInUser);
+      if (uploadedImageUrl) {
+        console.log("Image uploaded to Imgbb:", uploadedImageUrl);
+        const imgUrlInput = document.getElementById("imgUrlInput");
+        if (imgUrlInput) imgUrlInput.value = uploadedImageUrl;
+      }
+    });
+
+
+    retakeBtn.addEventListener("click", () => {
+      imageDataURL = null;
+      video.style.display = "block";
+      canvas.style.display = "none";
+      captureBtn.style.display = "inline-block";
+      retakeBtn.style.display = "none";
+      const imgUrlInput = document.getElementById("imgUrlInput");
+      if (imgUrlInput) imgUrlInput.value = "";
+
+      startCamera();
+    });
+
+
+    async function uploadToImgbb(base64Image, username) {
+      const apiKey = '14e51e0636e117beac224a32711adc49';
+      const url = `https://api.imgbb.com/1/upload?key=${apiKey}`;
+
+      const base64 = base64Image.replace(/^data:image\/\w+;base64,/, '');
+
+      // Prepare timestamp
+      const now = new Date();
+      const timestamp = now.toISOString().replace(/:/g, '-'); // replace : to avoid issues
+
+      // Compose filename like username_timestamp.png
+      const fileName = `${username}_${timestamp}.png`;
+
+      const formData = new FormData();
+      formData.append('image', base64);
+      formData.append('name', fileName); // Note: ImgBB may ignore this
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          body: formData
+        });
+        const result = await response.json();
+
+        if (result.success) {
+          return result.data.url;
+        } else {
+          throw new Error('Upload failed');
+        }
+      } catch (error) {
+        alert("Failed to upload image: " + error.message);
+        return null;
+      }
+    }
+
+
+
+
+const logoutBtn = document.getElementById("logoutBtn");
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", () => {
+    localStorage.clear();
+    window.location.href = "index.html";
+  });
+}
+
+</script>
+
+</body>
+
+</html>
+
