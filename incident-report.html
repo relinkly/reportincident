@@ -343,7 +343,7 @@ img {
 </head>
 <body>
 
-<img src="zong.png" alt="Zong Logo" class="logo-top-left" width="100" height="24" />
+<img src="zong.png" alt="Zong Logo" class="logo-top-left" />
 <button id="logoutBtn" class="logout-btn-top-right">Logout</button>
 
 <main class="max-w-3xl mx-auto px-4 py-6">
@@ -433,50 +433,44 @@ img {
     ></textarea>
   </div>
 
-  <!-- Capture Image Section -->
-  <fieldset class="border p-3 rounded">
-    <legend class="font-medium text-gray-700 mb-2">Capture Image</legend>
+<!-- Capture / Upload Image Section -->
+<fieldset class="border p-3 rounded">
+  <legend class="font-medium text-gray-700 mb-2">Upload or Capture Image(s)</legend>
 
-    <video
-      id="camera"
-      autoplay
-      playsinline
-      class="w-full rounded border mb-2"
-    ></video>
+  <!-- Upload Input -->
+  <div class="mb-3">
+    <label for="uploadImages" class="block mb-1 font-medium text-gray-700">Upload Images</label>
+    <input
+      type="file"
+      id="uploadImages"
+      name="images[]"
+      accept="image/*"
+      multiple
+      class="block w-full text-sm text-gray-600"
+    />
+  </div>
+  
+ <!-- Camera -->
+  <video id="camera" autoplay playsinline class="w-full rounded border mb-2"></video>
+  <canvas id="snapshot" style="display: none;"></canvas>
 
-    <canvas id="snapshot" style="display: none;"></canvas>
+  <!-- Preview Area -->
+  <div id="preview-container" class="mt-2 grid grid-cols-2 gap-2">
+    <img id="preview" src="" alt="Image preview" style="display: none;" class="rounded border" />
+  </div>
 
-    <div id="preview-container" class="mt-2">
-      <img
-        id="preview"
-        src=""
-        alt="Image preview"
-        style="display: none;"
-        class="rounded border w-full"
-      />
-    </div>
-
-    <div class="flex gap-3 mt-3">
-      <button
-        type="button"
-        id="captureBtn"
-        class="bg-gray-700 text-white px-3 py-2 rounded text-sm hover:bg-gray-800 transition"
-      >
-        Capture Photo
-      </button>
-      <button
-        type="button"
-        id="retakeBtn"
-        style="display: none;"
-        class="bg-gray-400 text-white px-3 py-2 rounded text-sm hover:bg-gray-500 transition"
-      >
-        Retake
-      </button>
-    </div>
-  </fieldset>
+  <div class="flex gap-3 mt-3">
+    <button type="button" id="captureBtn" class="bg-gray-700 text-white px-3 py-2 rounded text-sm hover:bg-gray-800 transition">
+      Capture Photo
+    </button>
+    <button type="button" id="retakeBtn" style="display: none;" class="bg-gray-400 text-white px-3 py-2 rounded text-sm hover:bg-gray-500 transition">
+      Retake
+    </button>
+  </div>
+</fieldset>
 
   <!-- Hidden image filename input -->
-  <input type="hidden" id="imgFilenameInput" name="entry.1179564217" value="">
+  <input type="hidden" id="imgUrlInput" name="entry.1179564217" value="">
 
   <!-- Submit button -->
   <button
@@ -668,7 +662,43 @@ const usernameInput = document.getElementById("username");
       }
     });
 
+const uploadInput = document.getElementById("uploadImages");
+const previewContainer = document.getElementById("preview-container");
+const imgUrlInput = document.getElementById("imgUrlInput");
+const previewContainer = document.getElementById("preview-container");
+if (previewContainer) previewContainer.innerHTML = "";
 
+let uploadedImageUrls = []; // Store all URLs
+
+uploadInput.addEventListener("change", async function () {
+  const files = Array.from(uploadInput.files);
+  if (files.length === 0) return;
+
+  uploadedImageUrls = [];
+  previewContainer.innerHTML = ""; // Clear previous previews
+
+  for (const file of files) {
+    const reader = new FileReader();
+    reader.onload = async function (e) {
+      const dataUrl = e.target.result;
+
+      // Show image preview
+      const img = document.createElement("img");
+      img.src = dataUrl;
+      img.className = "rounded border w-full";
+      img.style.maxHeight = "200px";
+      previewContainer.appendChild(img);
+
+      // Upload to ImgBB
+      const uploadedUrl = await uploadToImgbb(dataUrl, loggedInUser);
+      if (uploadedUrl) {
+        uploadedImageUrls.push(uploadedUrl);
+        imgUrlInput.value = uploadedImageUrls.join(','); // Store comma-separated URLs
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+});
     retakeBtn.addEventListener("click", () => {
       imageDataURL = null;
       video.style.display = "block";
@@ -733,6 +763,7 @@ if (logoutBtn) {
 </body>
 
 </html>
+
 
 
 
