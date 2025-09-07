@@ -5,105 +5,106 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>KPI Dashboards Menu</title>
   <style>
-/* Base Reset */
-*,
-*::before,
-*::after {
+/* ===== Reset & Base Styles ===== */
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f4f6f8;
-  color: #2d2d2d;
+  background: #f0f3f2;
+  color: #2e3e2f;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   padding: 60px 20px 40px;
-  min-height: 100vh;
+  line-height: 1.6;
 }
 
-/* Main Card */
+/* ===== Layout ===== */
 main {
-  background: #ffffff;
+  background: #fff;
   max-width: 880px;
   width: 100%;
   padding: 48px 40px;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
-/* Header */
+/* ===== Typography ===== */
 header h1 {
-  font-size: 2rem;
-  font-weight: 600;
-  color: #1a202c;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #2a4d3a;
   text-align: center;
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.04em;
 }
 
-/* Section */
 section {
   font-size: 1rem;
-  line-height: 1.6;
+  color: #3e4e3f;
 }
 
 section h2 {
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: #2c5282;
+  color: #2a4d3a;
 }
 
-ul {
-  padding-left: 1.2rem;
-  list-style: disc;
-}
-
-/* Primary Button */
-#reportBtn {
-  background: #2b6cb0;
-  color: #fff;
-  padding: 12px 28px;
+/* ===== Buttons ===== */
+button,
+input[type="submit"],
+#reportBtn,
+.logout-btn,
+#captureBtn,
+#retakeBtn {
   border: none;
-  border-radius: 6px;
+  border-radius: 30px;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.15s ease;
+  transition: background 0.3s ease, transform 0.15s ease, box-shadow 0.3s ease;
+}
+
+/* Report Button */
+#reportBtn {
+  background: #3a7d44;
+  color: white;
+  padding: 12px 32px;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 12px rgba(58, 125, 68, 0.3);
 }
 
 #reportBtn:hover {
-  background: #2c5282;
-  transform: translateY(-1px);
+  background: #2a5931;
+  transform: translateY(-2px);
 }
 
 /* Logout Button */
 .logout-btn {
-  background: #e53e3e;
+  background: #f44336;
   color: white;
   padding: 12px 28px;
-  font-weight: 600;
-  font-size: 1rem;
-  border-radius: 6px;
-  border: none;
   align-self: center;
-  cursor: pointer;
-  transition: background 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .logout-btn:hover {
-  background: #c53030;
+  background: #d32f2f;
+  transform: translateY(-2px);
 }
 
-/* Modal Overlay */
+/* ===== Modal ===== */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background-color: rgba(42, 77, 58, 0.5);
   display: none;
   justify-content: center;
   align-items: center;
@@ -116,139 +117,154 @@ ul {
   display: flex;
 }
 
-/* Modal Box */
 .modal {
   background: #fff;
-  border-radius: 10px;
-  max-width: 520px;
+  border-radius: 16px;
+  max-width: 500px;
   width: 100%;
-  padding: 32px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 36px 32px;
   position: relative;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
 }
 
 .modal h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #3a7d44;
   text-align: center;
-  color: #2b6cb0;
-  margin-bottom: 24px;
+  margin-bottom: 30px;
 }
 
-/* Close Button */
 .close-modal-btn {
   position: absolute;
-  top: 12px;
-  right: 16px;
+  top: 14px;
+  right: 20px;
   background: none;
   border: none;
-  font-size: 1.6rem;
-  color: #4a5568;
+  font-size: 1.8rem;
+  color: #3a7d44;
   cursor: pointer;
 }
 
 .close-modal-btn:hover {
-  color: #2d3748;
+  color: #1f3a2a;
 }
 
-/* Form Styling */
+/* ===== Form Styles ===== */
 form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  font-size: 0.95rem;
+  gap: 20px;
 }
 
 form label {
   font-weight: 600;
+  font-size: 0.95rem;
+  color: #4a5e4a;
   margin-bottom: 6px;
-  display: block;
 }
 
 input[type="text"],
 textarea {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1.5px solid #cbd5d1;
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #cbd5e0;
-  border-radius: 6px;
-  background: #fff;
   font-size: 1rem;
-  transition: border-color 0.3s ease;
+  background: #fdfdfd;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
-input[type="text"]:focus,
+input:focus,
 textarea:focus {
-  border-color: #2b6cb0;
+  border-color: #3a7d44;
+  box-shadow: 0 0 8px rgba(58, 125, 68, 0.3);
   outline: none;
 }
 
-/* Readonly Input */
 input[readonly] {
-  background-color: #edf2f7;
-  color: #4a5568;
-  cursor: not-allowed;
+  background: #f4f7f5;
+  color: #6b7a6a;
 }
 
-/* Submit Button */
 form button[type="submit"] {
-  background: #2b6cb0;
+  background: #3a7d44;
   color: white;
-  padding: 12px;
-  font-weight: 600;
-  font-size: 1rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.3s ease;
+  padding: 14px;
+  margin-top: 10px;
+  border-radius: 30px;
+  box-shadow: 0 4px 14px rgba(58, 125, 68, 0.35);
 }
 
 form button[type="submit"]:hover {
-  background: #2c5282;
+  background: #2a5931;
+  transform: translateY(-2px);
 }
 
-/* Capture Image */
+/* ===== Capture Image Area ===== */
 video,
 img {
   width: 100%;
+  max-width: 300px;
   max-height: 300px;
   object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 12px;
+  border-radius: 12px;
+  display: block;
+  margin-bottom: 10px;
 }
 
 #captureBtn,
 #retakeBtn {
-  background: #2b6cb0;
+  background: #3a7d44;
   color: white;
-  padding: 10px 22px;
-  font-weight: 600;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.3s ease;
+  padding: 12px 36px;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 28px;
+  user-select: none;
+  margin-right: 10px;
+  box-shadow: 0 4px 12px rgba(58, 125, 68, 0.4);
 }
 
 #retakeBtn {
-  background: #718096;
+  background: #607d3b;
 }
 
 #captureBtn:hover,
-#retakeBtn:hover {
-  background: #2c5282;
+#retakeBtn:hover,
+#captureBtn:focus,
+#retakeBtn:focus {
+  background: #2a5931;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(42, 89, 49, 0.5);
 }
 
-/* Responsive */
+#captureBtn:focus-visible,
+#retakeBtn:focus-visible {
+  outline: 3px solid #2a5931;
+  outline-offset: 3px;
+}
+
+/* ===== Responsive Design ===== */
 @media (max-width: 600px) {
   main {
-    padding: 28px 20px;
+    padding: 32px 24px;
   }
 
   header h1 {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
   }
 
   .modal {
     padding: 24px;
+  }
+
+  .modal h2 {
+    font-size: 1.4rem;
   }
 
   .logout-btn,
@@ -256,6 +272,7 @@ img {
     width: 100%;
   }
 }
+
 
 
 
@@ -648,6 +665,7 @@ if (logoutBtn) {
 </body>
 
 </html>
+
 
 
 
