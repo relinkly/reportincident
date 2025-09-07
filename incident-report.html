@@ -338,6 +338,11 @@ img {
   transform: translateY(-2px);
 }
 
+#preview-container img {
+  max-width: 120px;
+  height: auto;
+}
+
   </style>
 </head>
 <body>
@@ -447,16 +452,15 @@ img {
   </button>
 </div>
 
-<!-- Upload File Input (Hidden initially) -->
 <input
   type="file"
   id="uploadImages"
   name="uploadImages"
   accept="image/*"
+  multiple
   class="block w-full text-sm text-gray-600"
   style="display: none;"
 />
-
 
   </div>
   
@@ -507,6 +511,10 @@ img {
 </script>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+    let imageList = []; // stores File objects and Data URLs
+
 const reportBtn = document.getElementById("reportBtn");
 
 const usernameInput = document.getElementById("username");
@@ -514,6 +522,8 @@ const usernameInput = document.getElementById("username");
     const modal = document.getElementById("incidentModal");
     
     const closeModalBtn = modal.querySelector(".close-modal-btn");
+    closeModalBtn.addEventListener("click", closeModal);
+
     const incidentForm = document.getElementById("incidentForm");
     const logoutBtn = document.getElementById("logoutBtn");
 
@@ -565,50 +575,74 @@ const usernameInput = document.getElementById("username");
     }
 
     async function startCamera() {
-      try {
-        // Use back camera:
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-        video.srcObject = stream;
-      } catch (err) {
-        alert("Could not access the camera. Please allow camera permissions.");
-      }
+  try {
+    video.style.display = "block"; // ✅ Ensure it's visible BEFORE requesting stream
+
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
     }
 
+    video.srcObject = null;
 
-    function stopCamera() {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-        stream = null;
-        video.srcObject = null;
-      }
-    }
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+    video.srcObject = stream;
+
+  } catch (err) {
+    alert("Could not access the camera. Please allow camera permissions.");
+    console.error(err);
+  }
+}
+
+
+  function stopCamera() {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+  }
+  video.srcObject = null;
+}
+
 
     function openModal() {
-      lastFocusedElement = document.activeElement;
-      modal.classList.add("active");
-      modal.setAttribute("aria-hidden", "false");
-      reportBtn.setAttribute("aria-expanded", "true");
+  lastFocusedElement = document.activeElement;
+  modal.classList.add("active");
+  modal.setAttribute("aria-hidden", "false");
+  reportBtn.setAttribute("aria-expanded", "true");
 
-      const focusableElements = modal.querySelectorAll(focusableSelectors.join(","));
-      if (focusableElements.length) {
-        focusableElements[0].focus();
-      }
-      document.addEventListener("keydown", trapFocus);
+  const focusableElements = modal.querySelectorAll(focusableSelectors.join(","));
+  if (focusableElements.length) {
+    focusableElements[0].focus();
+  }
+  document.addEventListener("keydown", trapFocus);
+
+  // ✅ Reset Upload/Capture UI
+  document.getElementById("uploadImages").style.display = "none";
+  document.getElementById("camera").style.display = "none";
+  document.getElementById("snapshot").style.display = "none";
+  document.getElementById("captureBtn").style.display = "none";
+  document.getElementById("retakeBtn").style.display = "none";
+
+  // ✅ Reset preview area
+  const previewContainer = document.getElementById("preview-container");
+  previewContainer.innerHTML = "";
+
+  // ✅ Reset file input
+  const fileInput = document.getElementById("uploadImages");
+  fileInput.value = "";
+
+  // ✅ Reset image list
+  imageList = [];
+
+  // ✅ Reset hidden input
+  const imgUrlInput = document.getElementById("imgUrlInput");
+  if (imgUrlInput) imgUrlInput.value = "";
+
+  // ✅ Stop any camera that might be running
+  stopCamera();
+}
 
 
-      // Reset UI states
-      imageDataURL = null;
-      video.style.display = "block";
-      canvas.style.display = "none";
-      captureBtn.style.display = "inline-block";
-      retakeBtn.style.display = "none";
-
-      const imgUrlInput = document.getElementById("imgUrlInput");
-      if (imgUrlInput) imgUrlInput.value = "";
-
-    }
-
-    function closeModal() {
+   function closeModal() {
   modal.classList.remove("active");
   modal.setAttribute("aria-hidden", "true");
   reportBtn.setAttribute("aria-expanded", "false");
@@ -616,101 +650,218 @@ const usernameInput = document.getElementById("username");
   document.removeEventListener("keydown", trapFocus);
 
   stopCamera();
+  video.srcObject = null;
+  video.style.display = 'none';
 
   // 🔄 Reset preview image and file input
   const preview = document.getElementById('preview');
+  if (preview) {
+    preview.src = '';
+    preview.style.display = 'none';
+  }
+
   const fileInput = document.getElementById('uploadImages');
   const imgUrlInput = document.getElementById("imgUrlInput");
 
-  preview.src = '';
-  preview.style.display = 'none';
   fileInput.value = ''; // reset the file input
   imgUrlInput.value = ''; // reset hidden input value
+
+  // ✅ Clear preview-container of all child images
+  const previewContainer = document.getElementById("preview-container");
+  previewContainer.innerHTML = "";
 }
 
 
-    incidentForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
+     incidentForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-  const area = incidentForm.area.value.trim();
-  const description = incidentForm.description.value.trim();
-  const imgUrlInput = document.getElementById("imgUrlInput");
-  const uploadInput = document.getElementById("uploadImages");
+    const area = incidentForm.area.value.trim();
+    const description = incidentForm.description.value.trim();
+    const imgUrlInput = document.getElementById("imgUrlInput");
 
-  if (!area || !description) {
-    alert("Please fill in all required fields.");
-    return;
-  }
-
-  // Check if image URL is already set (from camera)
-  if (!imgUrlInput.value) {
-    // If not, try uploading uploaded file
-    const file = uploadInput.files[0];
-    if (!file) {
-      alert("Please upload or capture an image before submitting.");
+    if (!area || !description) {
+      alert("Please fill in all required fields.");
       return;
     }
 
-    // Convert image file to base64
-    const reader = new FileReader();
-    reader.onload = async function (e) {
-      const base64Image = e.target.result;
+    if (imageList.length === 0) {
+      alert("Please upload or capture at least one image before submitting.");
+      return;
+    }
+
+    // Upload all images to ImgBB
+    const uploadedUrls = [];
+    for (let img of imageList) {
+      let base64Image = null;
+
+      if (typeof img === 'string') {
+        base64Image = img;
+      } else if (img instanceof Blob) {
+        base64Image = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(img);
+        });
+      } else {
+        alert("Unsupported image type.");
+        return;
+      }
+
       const uploadedImageUrl = await uploadToImgbb(base64Image, loggedInUser);
       if (uploadedImageUrl) {
-        imgUrlInput.value = uploadedImageUrl;
-        incidentForm.submit();
-        alert("Incident reported successfully.");
-        incidentForm.reset();
-        usernameInput.value = loggedInUser;
-        closeModal();
+        uploadedUrls.push(uploadedImageUrl);
       } else {
-        alert("Failed to upload the image.");
+        alert("Failed to upload one or more images. Please try again.");
+        return;
       }
-    };
-    reader.readAsDataURL(file);
-  } else {
-    // Already has image URL from captured photo
+    }
+
+    // Set all URLs into hidden input
+    imgUrlInput.value = uploadedUrls.join('\n');
+
+    // Submit the form to Google Forms
     incidentForm.submit();
     alert("Incident reported successfully.");
+
+    // Reset state
     incidentForm.reset();
+    imageList = [];
     usernameInput.value = loggedInUser;
+    document.getElementById('preview-container').innerHTML = '';
     closeModal();
-  }
-});
+  });
 
 
+ function resizeImage(file, maxWidth = 800, maxHeight = 800) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const reader = new FileReader();
 
-    captureBtn.addEventListener("click", async () => {
-      const context = canvas.getContext("2d");
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      reader.onload = e => img.src = e.target.result;
+      reader.onerror = reject;
 
-      imageDataURL = canvas.toDataURL("image/png");
-      video.style.display = "none";
-      canvas.style.display = "block";
-      captureBtn.style.display = "none";
-      retakeBtn.style.display = "inline-block";
+      img.onload = () => {
+        let { width, height } = img;
 
-      stopCamera();
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round(height * maxWidth / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round(width * maxHeight / height);
+            height = maxHeight;
+          }
+        }
 
-      // Create timestamp string
-      const now = new Date();
-      const pad = (n) => (n < 10 ? '0' + n : n);
-      const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
 
-      const filename = `${loggedInUser}_${timestamp}.png`;
+        canvas.toBlob(blob => {
+          if (blob) resolve(blob);
+          else reject(new Error("Canvas is empty"));
+        }, 'image/jpeg', 0.7); // compress quality 0.7
+      };
 
-      const imgFilenameInput = document.getElementById("imgFilenameInput");
-      if (imgFilenameInput) imgFilenameInput.value = filename;
-
-      const uploadedImageUrl = await uploadToImgbb(imageDataURL, loggedInUser);
-      if (uploadedImageUrl) {
-        console.log("Image uploaded to Imgbb:", uploadedImageUrl);
-        const imgUrlInput = document.getElementById("imgUrlInput");
-        if (imgUrlInput) imgUrlInput.value = uploadedImageUrl;
-      }
+      reader.readAsDataURL(file);
     });
+  }
+
+  // New helper to create preview with delete button and append to preview container
+  function addImagePreview(blobOrDataUrl, index) {
+    const previewContainer = document.getElementById("preview-container");
+
+    // Wrapper div for image + delete button
+    const wrapper = document.createElement('div');
+    wrapper.style.position = 'relative';
+    wrapper.style.display = 'inline-block';
+    wrapper.style.margin = '5px';
+
+    const img = document.createElement("img");
+
+    if (blobOrDataUrl instanceof Blob) {
+      img.src = URL.createObjectURL(blobOrDataUrl);
+    } else {
+      // data URL string
+      img.src = blobOrDataUrl;
+    }
+
+    img.className = "rounded border";
+    img.style.width = '100px';
+    img.style.height = 'auto';
+
+    // Delete button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '×';
+    deleteBtn.style.position = 'absolute';
+    deleteBtn.style.top = '2px';
+    deleteBtn.style.right = '2px';
+    deleteBtn.style.background = 'red';
+    deleteBtn.style.color = 'white';
+    deleteBtn.style.border = 'none';
+    deleteBtn.style.borderRadius = '50%';
+    deleteBtn.style.width = '20px';
+    deleteBtn.style.height = '20px';
+    deleteBtn.style.cursor = 'pointer';
+
+    deleteBtn.onclick = () => {
+      // Remove from preview
+      previewContainer.removeChild(wrapper);
+
+      // Remove from imageList
+      imageList.splice(index, 1);
+
+      // Since indices change after removal, re-render previews
+      renderPreviews();
+    };
+
+    wrapper.appendChild(img);
+    wrapper.appendChild(deleteBtn);
+    previewContainer.appendChild(wrapper);
+  }
+
+  // Helper to clear & re-render all previews (needed when deleting)
+  function renderPreviews() {
+    const previewContainer = document.getElementById("preview-container");
+    previewContainer.innerHTML = '';
+    imageList.forEach((imgData, i) => {
+      addImagePreview(imgData, i);
+    });
+  }
+
+
+
+      captureBtn.addEventListener("click", () => {
+    const context = canvas.getContext("2d");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob(async (blob) => {
+      try {
+        const resizedBlob = await resizeImage(blob);
+        // Store resized blob as object URL for upload
+        imageList.push(resizedBlob);
+
+        renderPreviews();
+
+        // Hide canvas, show video and capture button to allow multiple captures
+        canvas.style.display = "none";
+        video.style.display = "block";
+        captureBtn.style.display = "inline-block";
+        retakeBtn.style.display = "none";
+      } catch (err) {
+        alert("Failed to process captured image.");
+        console.error(err);
+      }
+    }, "image/png");
+  });
+
 
 
     retakeBtn.addEventListener("click", () => {
@@ -758,60 +909,60 @@ async function uploadToImgbb(base64Image, username) {
 
 
 // Show file input only when "Upload Image" is clicked
-document.getElementById("uploadImageBtn").addEventListener("click", () => {
-  document.getElementById("uploadImages").style.display = "block";
-  document.getElementById("camera").style.display = "none";
-  document.getElementById("captureBtn").style.display = "none";
-  document.getElementById("retakeBtn").style.display = "none";
-  document.getElementById("snapshot").style.display = "none";
-  stopCamera();
-});
+  document.getElementById("uploadImageBtn").addEventListener("click", () => {
+    document.getElementById("uploadImages").style.display = "block";
+    document.getElementById("camera").style.display = "none";
+    document.getElementById("captureBtn").style.display = "none";
+    document.getElementById("retakeBtn").style.display = "none";
+    document.getElementById("snapshot").style.display = "none";
+    stopCamera();
+  });
 
-// Start camera only when "Take Photo" is clicked
-document.getElementById("openCameraBtn").addEventListener("click", () => {
-  document.getElementById("uploadImages").style.display = "none";
-  document.getElementById("preview").style.display = "none";
-  document.getElementById("camera").style.display = "block";
-  document.getElementById("captureBtn").style.display = "inline-block";
-  document.getElementById("retakeBtn").style.display = "none";
-  document.getElementById("snapshot").style.display = "none";
-  document.getElementById("imgUrlInput").value = "";
-  startCamera();
-});
-
+  // Start camera only when "Take Photo" is clicked
+  document.getElementById("openCameraBtn").addEventListener("click", () => {
+    document.getElementById("uploadImages").style.display = "none";
+    document.getElementById("camera").style.display = "block";
+    document.getElementById("captureBtn").style.display = "inline-block";
+    document.getElementById("retakeBtn").style.display = "none";
+    document.getElementById("snapshot").style.display = "none";
+    document.getElementById("imgUrlInput").value = "";
+    startCamera();
+  });
 // Upload image and preview it
-document.getElementById('uploadImages').addEventListener('change', function () {
-  const file = this.files[0];
-  const preview = document.getElementById('preview');
+ document.getElementById('uploadImages').addEventListener('change', async function () {
+    const files = Array.from(this.files);
 
-  if (file && file.type.startsWith('image/')) {
-    const reader = new FileReader();
+    // We do NOT clear previous images, so new uploads add to list
 
-    reader.onload = function (e) {
-      preview.src = e.target.result;
-      preview.style.display = 'block';
-    };
+    for (const file of files) {
+      if (file && file.type.startsWith('image/')) {
+        try {
+          const resizedBlob = await resizeImage(file);
+          imageList.push(resizedBlob);
+          renderPreviews();
+        } catch (err) {
+          alert("Failed to process uploaded image.");
+          console.error(err);
+        }
+      }
+    }
 
-    reader.readAsDataURL(file);
-  } else {
-    preview.src = '';
-    preview.style.display = 'none';
-  }
-});
+    // Reset file input to allow uploading the same file again if needed
+    this.value = "";
+  });
+
+
 
 // ✅ Add this to open the modal when button is clicked
 reportBtn.addEventListener("click", openModal);
 
-
-
+});
 
 </script>
 
 </body>
 
 </html>
-
-
 
 
 
