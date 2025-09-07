@@ -738,18 +738,6 @@ uploadInput.addEventListener("change", function () {
   }
 });
 
-  // Combine camera and uploaded image URLs if both exist
-if (imageDataURL && canvas.style.display === "block") {
-  const cameraUrl = await uploadToImgbb(imageDataURL, loggedInUser);
-  if (cameraUrl) {
-    uploadedImageUrls.push(cameraUrl);
-    imgUrlInput.value = uploadedImageUrls.join(",");
-  } else {
-    alert("Failed to upload captured image.");
-    return;
-  }
-}
-
 
     retakeBtn.addEventListener("click", () => {
       imageDataURL = null;
@@ -815,6 +803,7 @@ if (logoutBtn) {
 </body>
 
 </html>
+
 
 
 
