@@ -12,15 +12,17 @@
 
 body {
   margin: 0;
+  padding-top: 80px; /* below top-bar */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f0f3f2;
   color: #2e3e2f;
   min-height: 100vh;
   display: flex;
+  align-items: center;
   justify-content: center;
-  padding: 60px 20px 40px;
   line-height: 1.6;
 }
+
 
 /* ===== Layout ===== */
 main {
@@ -30,9 +32,7 @@ main {
   padding: 48px 40px;
   border-radius: 16px;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  margin: auto;
 }
 
 /* ===== Typography ===== */
@@ -293,17 +293,51 @@ img {
 }
 
 
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 1000;
+}
+
+.top-logo {
+  height: 40px;
+}
+
+.logout-btn {
+  background: #f44336;
+  color: white;
+  padding: 10px 20px;
+  font-weight: 600;
+  border-radius: 9999px;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.logout-btn:hover {
+  background: #d32f2f;
+  transform: translateY(-2px);
+}
 
   </style>
 </head>
 <body>
 
-<button 
-    id="logoutBtn"
-    class="px-5 py-3 bg-red-600 text-white text-sm font-semibold rounded-full shadow-md hover:bg-red-700 transition"
-  >
-    Logout
-  </button>
+<!-- Fixed Top Bar -->
+<div class="top-bar">
+  <img src="zong.png" alt="Logo" class="top-logo" />
+  <button id="logoutBtn" class="logout-btn">Logout</button>
+</div>
+
 <main class="max-w-3xl mx-auto px-4 py-6">
   <header class="text-center mb-6">
     <h1 class="text-2xl font-semibold">Report An Incident</h1>
@@ -691,6 +725,7 @@ if (logoutBtn) {
 </body>
 
 </html>
+
 
 
 
