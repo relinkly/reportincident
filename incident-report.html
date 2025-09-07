@@ -438,14 +438,15 @@ img {
   <!-- Upload Input -->
   <div class="mb-3">
     <label for="uploadImages" class="block mb-1 font-medium text-gray-700">Upload Images</label>
-    <input
-      type="file"
-      id="uploadImages"
-      name="images[]"
-      accept="image/*"
-      multiple
-      class="block w-full text-sm text-gray-600"
-    />
+    <!-- Replace your current file input with ID for easier access -->
+<input
+  type="file"
+  id="uploadImages"
+  name="uploadImages"
+  accept="image/*"
+  class="block w-full text-sm text-gray-600"
+/>
+
   </div>
   
  <!-- Camera -->
@@ -616,17 +617,55 @@ const usernameInput = document.getElementById("username");
       }
     });
 
-    incidentForm.addEventListener("submit", (event) => {
-      if (!incidentForm.area.value.trim() || !incidentForm.description.value.trim()) {
-        alert("Please fill in all required fields.");
-        event.preventDefault();
-        return;
+    incidentForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const area = incidentForm.area.value.trim();
+  const description = incidentForm.description.value.trim();
+  const imgUrlInput = document.getElementById("imgUrlInput");
+  const uploadInput = document.getElementById("uploadImages");
+
+  if (!area || !description) {
+    alert("Please fill in all required fields.");
+    return;
+  }
+
+  // Check if image URL is already set (from camera)
+  if (!imgUrlInput.value) {
+    // If not, try uploading uploaded file
+    const file = uploadInput.files[0];
+    if (!file) {
+      alert("Please upload or capture an image before submitting.");
+      return;
+    }
+
+    // Convert image file to base64
+    const reader = new FileReader();
+    reader.onload = async function (e) {
+      const base64Image = e.target.result;
+      const uploadedImageUrl = await uploadToImgbb(base64Image, loggedInUser);
+      if (uploadedImageUrl) {
+        imgUrlInput.value = uploadedImageUrl;
+        incidentForm.submit();
+        alert("Incident reported successfully.");
+        incidentForm.reset();
+        usernameInput.value = loggedInUser;
+        closeModal();
+      } else {
+        alert("Failed to upload the image.");
       }
-      alert("Incident reported successfully.");
-      incidentForm.reset();
-      usernameInput.value = loggedInUser;
-      closeModal();
-    });
+    };
+    reader.readAsDataURL(file);
+  } else {
+    // Already has image URL from captured photo
+    incidentForm.submit();
+    alert("Incident reported successfully.");
+    incidentForm.reset();
+    usernameInput.value = loggedInUser;
+    closeModal();
+  }
+});
+
 
 
     captureBtn.addEventListener("click", async () => {
@@ -675,40 +714,36 @@ const usernameInput = document.getElementById("username");
     });
 
 
-    async function uploadToImgbb(base64Image, username) {
-      const apiKey = '14e51e0636e117beac224a32711adc49';
-      const url = `https://api.imgbb.com/1/upload?key=${apiKey}`;
+   // Helper to upload image to ImgBB and return URL
+async function uploadToImgbb(base64Image, username) {
+  const apiKey = '14e51e0636e117beac224a32711adc49';
+  const url = `https://api.imgbb.com/1/upload?key=${apiKey}`;
 
-      const base64 = base64Image.replace(/^data:image\/\w+;base64,/, '');
+  const base64 = base64Image.replace(/^data:image\/\w+;base64,/, '');
+  const timestamp = new Date().toISOString().replace(/:/g, '-');
+  const fileName = `${username}_${timestamp}.png`;
 
-      // Prepare timestamp
-      const now = new Date();
-      const timestamp = now.toISOString().replace(/:/g, '-'); // replace : to avoid issues
+  const formData = new FormData();
+  formData.append('image', base64);
+  formData.append('name', fileName);
 
-      // Compose filename like username_timestamp.png
-      const fileName = `${username}_${timestamp}.png`;
-
-      const formData = new FormData();
-      formData.append('image', base64);
-      formData.append('name', fileName); // Note: ImgBB may ignore this
-
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          body: formData
-        });
-        const result = await response.json();
-
-        if (result.success) {
-          return result.data.url;
-        } else {
-          throw new Error('Upload failed');
-        }
-      } catch (error) {
-        alert("Failed to upload image: " + error.message);
-        return null;
-      }
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      body: formData
+    });
+    const result = await response.json();
+    if (result.success) {
+      return result.data.url;
+    } else {
+      throw new Error('Upload failed');
     }
+  } catch (error) {
+    alert("Failed to upload image: " + error.message);
+    return null;
+  }
+}
+
 
 
 
@@ -718,3 +753,4 @@ const usernameInput = document.getElementById("username");
 </body>
 
 </html>
+
