@@ -21,6 +21,7 @@ body {
   align-items: center;
   justify-content: center;
   line-height: 1.6;
+  padding-top: 100px;
 }
 
 
@@ -309,10 +310,22 @@ img {
 }
 
 .top-logo {
-  height: 40px;
+  height: 30px;
 }
 
-.logout-btn {
+/* Floating logo and logout button */
+.logo-top-left {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  height: 40px; /* smaller size */
+  z-index: 1000;
+}
+
+.logout-btn-top-right {
+  position: fixed;
+  top: 20px;
+  right: 20px;
   background: #f44336;
   color: white;
   padding: 10px 20px;
@@ -321,9 +334,10 @@ img {
   font-size: 0.9rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: background 0.3s ease, transform 0.2s ease;
+  z-index: 1000;
 }
 
-.logout-btn:hover {
+.logout-btn-top-right:hover {
   background: #d32f2f;
   transform: translateY(-2px);
 }
@@ -332,11 +346,8 @@ img {
 </head>
 <body>
 
-<!-- Fixed Top Bar -->
-<div class="top-bar">
-  <img src="zong.png" alt="Logo" class="top-logo" />
-  <button id="logoutBtn" class="logout-btn">Logout</button>
-</div>
+<img src="zong.png" alt="Zong Logo" class="logo-top-left" />
+<button id="logoutBtn" class="logout-btn-top-right">Logout</button>
 
 <main class="max-w-3xl mx-auto px-4 py-6">
   <header class="text-center mb-6">
@@ -725,6 +736,7 @@ if (logoutBtn) {
 </body>
 
 </html>
+
 
 
 
