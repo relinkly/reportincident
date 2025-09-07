@@ -623,11 +623,10 @@ const usernameInput = document.getElementById("username");
     return;
   }
 
-  const files = Array.from(uploadInput.files);
+ const files = Array.from(uploadInput.files);
+uploadedImageUrls = [];
 
-// Upload each file if not uploaded yet
 if (files.length > 0) {
-  uploadedImageUrls = []; // Reset
   const uploadPromises = files.map(file => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -656,16 +655,17 @@ if (files.length > 0) {
 }
 
 
-  // If camera was used and an imageDataURL exists but no ImgBB URL
-  if (canvas.style.display === "block" && imageDataURL && imgUrlInput.value.trim() === "") {
-    const cameraUploadUrl = await uploadToImgbb(imageDataURL, loggedInUser);
-    if (cameraUploadUrl) {
-      imgUrlInput.value = cameraUploadUrl;
-    } else {
-      alert("Failed to upload captured image.");
-      return;
-    }
+
+ if (canvas.style.display === "block" && imageDataURL && imgUrlInput.value.trim() === "") {
+  const cameraUploadUrl = await uploadToImgbb(imageDataURL, loggedInUser);
+  if (cameraUploadUrl) {
+    imgUrlInput.value = cameraUploadUrl;
+  } else {
+    alert("Failed to upload captured image.");
+    return;
   }
+}
+
 
   // Now everything is uploaded → submit form
   alert("Incident reported successfully.");
@@ -716,35 +716,41 @@ if (previewContainer) previewContainer.innerHTML = "";
 
 let uploadedImageUrls = []; // Store all URLs
 
-uploadInput.addEventListener("change", async function () {
+uploadInput.addEventListener("change", function () {
   const files = Array.from(uploadInput.files);
   if (files.length === 0) return;
 
-  uploadedImageUrls = [];
-  previewContainer.innerHTML = ""; // Clear previous previews
+  previewContainer.innerHTML = "";
 
   for (const file of files) {
     const reader = new FileReader();
-    reader.onload = async function (e) {
+    reader.onload = function (e) {
       const dataUrl = e.target.result;
 
-      // Show image preview
+      // Show image preview only (no upload here!)
       const img = document.createElement("img");
       img.src = dataUrl;
       img.className = "rounded border w-full";
       img.style.maxHeight = "200px";
       previewContainer.appendChild(img);
-
-      // Upload to ImgBB
-      const uploadedUrl = await uploadToImgbb(dataUrl, loggedInUser);
-      if (uploadedUrl) {
-        uploadedImageUrls.push(uploadedUrl);
-        imgUrlInput.value = uploadedImageUrls.join(','); // Store comma-separated URLs
-      }
     };
     reader.readAsDataURL(file);
   }
 });
+
+  // Combine camera and uploaded image URLs if both exist
+if (imageDataURL && canvas.style.display === "block") {
+  const cameraUrl = await uploadToImgbb(imageDataURL, loggedInUser);
+  if (cameraUrl) {
+    uploadedImageUrls.push(cameraUrl);
+    imgUrlInput.value = uploadedImageUrls.join(",");
+  } else {
+    alert("Failed to upload captured image.");
+    return;
+  }
+}
+
+
     retakeBtn.addEventListener("click", () => {
       imageDataURL = null;
       video.style.display = "block";
@@ -809,6 +815,7 @@ if (logoutBtn) {
 </body>
 
 </html>
+
 
 
 
