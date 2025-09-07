@@ -477,9 +477,23 @@ img {
     border-radius: 4px;
   }
 
+.logo-top-center {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 28px;
+  object-fit: contain;
+  z-index: 1000;
+}
+
+
+
+
   </style>
 </head>
 <body>
+<img src="zong.png" alt="Zong Logo" class="logo-top-center">
 
 <button id="logoutBtn" class="logout-btn-top-right">Logout</button>
 
@@ -619,6 +633,16 @@ const usernameInput = document.getElementById("username");
     const incidentForm = document.getElementById("incidentForm");
     const logoutBtn = document.getElementById("logoutBtn");
 
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", () => {
+        // Optional: Clear session or localStorage if you use it for login state
+        sessionStorage.clear();
+        localStorage.clear();
+
+        // Redirect to index.html
+        window.location.href = "index.html";
+      });
+    }
     const video = document.getElementById("camera");
     const canvas = document.getElementById("snapshot");
     const captureBtn = document.getElementById("captureBtn");
