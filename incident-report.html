@@ -626,33 +626,47 @@ const usernameInput = document.getElementById("username");
  const files = Array.from(uploadInput.files);
 uploadedImageUrls = [];
 
+// Handle uploaded files
 if (files.length > 0) {
-  const uploadPromises = files.map(file => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = async function (e) {
-        const dataUrl = e.target.result;
-        const uploadedUrl = await uploadToImgbb(dataUrl, loggedInUser);
-        if (uploadedUrl) {
-          resolve(uploadedUrl);
-        } else {
-          reject("Upload failed");
-        }
-      };
-      reader.onerror = () => reject("File read failed");
-      reader.readAsDataURL(file);
-    });
-  });
-
   try {
-    const urls = await Promise.all(uploadPromises);
-    uploadedImageUrls = urls;
-    imgUrlInput.value = urls.join(",");
+    const fileUploadPromises = files.map(file => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = async function (e) {
+          const dataUrl = e.target.result;
+          const uploadedUrl = await uploadToImgbb(dataUrl, loggedInUser);
+          if (uploadedUrl) {
+            resolve(uploadedUrl);
+          } else {
+            reject("Upload failed");
+          }
+        };
+        reader.onerror = () => reject("File read failed");
+        reader.readAsDataURL(file);
+      });
+    });
+
+    const uploadedUrls = await Promise.all(fileUploadPromises);
+    uploadedImageUrls.push(...uploadedUrls);
   } catch (error) {
     alert("One or more image uploads failed. Please try again.");
     return;
   }
 }
+
+// Handle captured camera image (if it exists and was not overwritten)
+if (imageDataURL) {
+  const cameraUploadUrl = await uploadToImgbb(imageDataURL, loggedInUser);
+  if (cameraUploadUrl) {
+    uploadedImageUrls.push(cameraUploadUrl);
+  } else {
+    alert("Failed to upload captured image.");
+    return;
+  }
+}
+
+imgUrlInput.value = uploadedImageUrls.join(",");
+
 
 
 
@@ -701,12 +715,8 @@ if (files.length > 0) {
       const imgFilenameInput = document.getElementById("imgFilenameInput");
       if (imgFilenameInput) imgFilenameInput.value = filename;
 
-      const uploadedImageUrl = await uploadToImgbb(imageDataURL, loggedInUser);
-      if (uploadedImageUrl) {
-        console.log("Image uploaded to Imgbb:", uploadedImageUrl);
-        const imgUrlInput = document.getElementById("imgUrlInput");
-        if (imgUrlInput) imgUrlInput.value = uploadedImageUrl;
-      }
+      console.log("Captured image stored, awaiting upload on submit.");
+
     });
 
 const uploadInput = document.getElementById("uploadImages");
@@ -803,6 +813,7 @@ if (logoutBtn) {
 </body>
 
 </html>
+
 
 
 
