@@ -2,77 +2,138 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - Incident Reporting</title>
   <style>
+    :root {
+      --primary-color: #3a7d44;
+      --primary-hover: #2a5931;
+      --bg-color: #eef2ef;
+      --error-color: #e53935;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: sans-serif;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
       display: flex;
-      justify-content: center;
       align-items: center;
-      height: 100vh;
-      background: #eef2ef;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1rem;
     }
+
     .login-container {
-      background: white;
+      background: #fff;
       padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      width: 100%;
       max-width: 400px;
-      width: 100%;
     }
-    input {
-      display: block;
+
+    .login-container h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      color: #2e3e2f;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.65rem 0.75rem;
       margin-bottom: 1rem;
-      padding: 0.6rem;
-      width: 100%;
       border: 1px solid #ccc;
-      border-radius: 6px;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.2s ease-in-out;
     }
+
+    input:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(58, 125, 68, 0.2);
+    }
+
     button {
-      background: #3a7d44;
+      width: 100%;
+      background: var(--primary-color);
       color: white;
-      padding: 0.7rem;
       border: none;
-      border-radius: 6px;
+      padding: 0.75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 30px;
       cursor: pointer;
+      transition: background 0.3s ease, transform 0.15s ease;
     }
+
     button:hover {
-      background: #2a5931;
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+
+    #errorMsg {
+      color: var(--error-color);
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 1.5rem;
+      }
+
+      .login-container h2 {
+        font-size: 1.25rem;
+      }
+
+      button {
+        font-size: 0.95rem;
+        padding: 0.65rem;
+      }
     }
   </style>
 </head>
 <body>
 
-<div class="login-container">
-  <h2>Login to Report Incident</h2>
-  <input type="text" id="username" placeholder="Username" />
-  <input type="password" id="password" placeholder="Password" />
-  <button onclick="login()">Login</button>
-  <p id="errorMsg" style="color:red;"></p>
-</div>
+  <div class="login-container">
+    <h2>Login to Report Incident</h2>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
+    <p id="errorMsg"></p>
+  </div>
 
-<script>
-  const whitelist = [
-    { username: "sameenyaser", password: "1234" }
-  ];
+  <script>
+    const whitelist = [
+      { username: "sameenyaser", password: "1234" }
+    ];
 
-  function login() {
-    const usernameInput = document.getElementById("username").value.trim();
-    const passwordInput = document.getElementById("password").value.trim();
-    const errorMsg = document.getElementById("errorMsg");
+    function login() {
+      const usernameInput = document.getElementById("username").value.trim();
+      const passwordInput = document.getElementById("password").value.trim();
+      const errorMsg = document.getElementById("errorMsg");
 
-    const user = whitelist.find(u => u.username === usernameInput && u.password === passwordInput);
+      const user = whitelist.find(u =>
+        u.username === usernameInput && u.password === passwordInput
+      );
 
-    if (user) {
-      localStorage.setItem("loggedIn", "true");
-      localStorage.setItem("username", user.username);
-      window.location.href = "incident-report.html"; // Replace with your actual filename
-    } else {
-      errorMsg.textContent = "Invalid username or password.";
+      if (user) {
+        localStorage.setItem("loggedIn", "true");
+        localStorage.setItem("username", user.username);
+        window.location.href = "incident-report.html"; // Change to your actual file
+      } else {
+        errorMsg.textContent = "Invalid username or password.";
+      }
     }
-  }
-</script>
+  </script>
 
 </body>
 </html>
-
