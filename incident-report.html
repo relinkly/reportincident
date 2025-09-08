@@ -537,65 +537,106 @@ img {
   <div class="modal bg-white rounded-md shadow-lg mx-auto mt-10">
     <button class="close-modal-btn text-lg float-right text-gray-500 hover:text-red-500" aria-label="Close incident report form" type="button">&times;</button>
     <h2 id="modalTitle" class="text-lg font-semibold text-gray-800 mb-2">Incident Details</h2>
-    <form id="incidentForm" action="https://docs.google.com/forms/d/e/1FAIpQLSdrmFNeQAUEjYGOYgHWOZCmEgtGknaXroWTD0keUro6DHocMg/formResponse" method="POST" target="hidden_iframe" onsubmit="submitted=true;" novalidate>
-      
-      <!-- Username -->
-      <div>
-        <label for="username" class="block font-medium text-gray-700 mb-1">Username</label>
-        <input type="text" id="username" name="entry.2120015252" readonly class="w-full border rounded bg-gray-100 text-gray-700 cursor-not-allowed" />
+    <form id="incidentForm" action="https://docs.google.com/forms/d/e/1FAIpQLSd5c1QouFPJDmlpfPEEeevnpsUMNVPUjEjblNcMrghHYUXlhA/formResponse" method="POST" target="hidden_iframe" onsubmit="submitted=true;" novalidate>
+  
+  <!-- Username -->
+  <div>
+    <label for="username" class="block font-medium text-gray-700 mb-1">Username</label>
+    <input type="text" id="username" name="entry.1634554342" readonly class="w-full border rounded bg-gray-100 text-gray-700 cursor-not-allowed" />
+  </div>
+
+  <!-- Region Dropdown -->
+  <div>
+    <label for="region" class="block text-sm font-medium text-gray-700 mb-1">Region</label>
+    <select id="region" name="entry.25383971" required
+      class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      <option value="" disabled selected>Select region</option>
+      <option value="Central 1">Central 1</option>
+      <option value="Central 4">Central 4</option>
+      <option value="Central 5">Central 5</option>
+      <option value="Central 6">Central 6</option>
+    </select>
+  </div>
+
+  <div>
+        <label for="area" class="block font-medium text-gray-700 mb-1">Franchise ID</label>
+        <input type="text" id="franchise" name="entry.1108724290" placeholder="Enter area" required aria-required="true" class="w-full border rounded focus:ring-2 focus:ring-indigo-500" />
       </div>
 
-      <!-- Area -->
       <div>
-        <label for="area" class="block font-medium text-gray-700 mb-1">Franchise ID / Area</label>
-        <input type="text" id="area" name="entry.1059382315" placeholder="Enter area" required aria-required="true" class="w-full border rounded focus:ring-2 focus:ring-indigo-500" />
+        <label for="area" class="block font-medium text-gray-700 mb-1">Area Name</label>
+        <input type="text" id="area" name="entry.121549873" placeholder="Enter area" required aria-required="true" class="w-full border rounded focus:ring-2 focus:ring-indigo-500" />
       </div>
+  <!-- Date -->
+<div class="mb-4">
+  <label for="date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+  <input type="date" id="date" name="entry.328998674" required
+    class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+</div>
 
-      <!-- Categories -->
-      <fieldset id="categoryFieldset" required>
-        <legend>Category (select one):</legend>
-        <div>
-          <label><input type="radio" name="entry.1991846988" value="BVS"> BVS</label>
-          <label><input type="radio" name="entry.1991846988" value="Network"> Network / Service</label>
-          <label><input type="radio" name="entry.1991846988" value="Portal"> System / Portal</label>
-          <label><input type="radio" name="entry.1991846988" value="Weather"> Weather / Rain / Flood</label>
-          <label><input type="radio" name="entry.1991846988" value="PowerOutage"> Power Outage</label>
-          <label><input type="radio" name="entry.1991846988" value="LawandOrder"> Law & Order / Strikes</label>
-          <label><input type="radio" name="entry.1991846988" value="Other"> Other</label>
-        </div>
-      </fieldset>
+<!-- Start and End Time in One Row -->
+<div class="flex flex-row flex-nowrap gap-4 mb-4">
+  <!-- Start Time -->
+  <div class="w-1/2">
+    <label for="starttime" class="block text-sm font-medium text-gray-700 mb-1">Start Time</label>
+    <input type="time" id="starttime" name="entry.2005489746" required
+      class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+ 
+    <label for="endtime" class="block text-sm font-medium text-gray-700 mb-1">End Time</label>
+    <input type="time" id="endtime" name="entry.1320935756" required
+      class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+  </div>
+</div>
 
-      <!-- Description -->
-      <div>
-        <label for="description" class="block font-medium text-gray-700 mb-1">Description</label>
-        <textarea id="description" name="entry.1887453304" rows="3" placeholder="Describe the incident in detail" required class="w-full border rounded focus:ring-2 focus:ring-indigo-500"></textarea>
-      </div>
 
-      <!-- Upload/Capture Section -->
-      <fieldset class="border p-3 rounded">
-        <legend class="font-medium text-gray-700 mb-1">Upload or Capture Image(s)</legend>
-        <div class="flex flex-wrap gap-2 mb-2">
-          <button type="button" id="uploadImageBtn" class="bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">Upload Image</button>
-          <button type="button" id="openCameraBtn" class="bg-green-600 text-white rounded hover:bg-green-700 transition">Take Photo</button>
-        </div>
-        <input type="file" id="uploadImages" name="uploadImages" accept="image/*" multiple style="display:none;">
-        <video id="camera" autoplay playsinline class="w-full rounded border mb-2"></video>
-        <canvas id="snapshot" style="display:none;"></canvas>
-        <div id="preview-container" class="grid grid-cols-2 gap-2 mb-2">
-          <img id="preview" src="" alt="Image preview" style="display:none;" class="rounded border" />
-        </div>
-        <div class="flex gap-2">
-          <button type="button" id="captureBtn" class="bg-gray-700 text-white rounded hover:bg-gray-800 transition">Capture Photo</button>
-          <button type="button" id="retakeBtn" style="display:none;" class="bg-gray-400 text-white rounded hover:bg-gray-500 transition">Retake</button>
-        </div>
-      </fieldset>
 
-      <!-- Hidden image input -->
-      <input type="hidden" id="imgUrlInput" name="entry.1179564217" value="">
+  <!-- Categories -->
+  <fieldset id="categoryFieldset">
+  <legend>Category (select one):</legend>
+  <div>
+    <label><input type="radio" name="entry.1980764601" value="BVS" required> BVS</label>
+    <label><input type="radio" name="entry.1980764601" value="Network"> Network / Service</label>
+    <label><input type="radio" name="entry.1980764601" value="Portal"> System / Portal</label>
+    <label><input type="radio" name="entry.1980764601" value="Weather"> Weather / Rain / Flood</label>
+    <label><input type="radio" name="entry.1980764601" value="PowerOutage"> Power Outage</label>
+    <label><input type="radio" name="entry.1980764601" value="LawandOrder"> Law & Order / Strikes</label>
+    <label><input type="radio" name="entry.1980764601" value="Other"> Other</label>
+  </div>
+</fieldset>
 
-      <!-- Submit -->
-      <button type="submit" class="w-full bg-indigo-600 text-white rounded py-2 hover:bg-indigo-700 transition">Submit Incident</button>
-    </form>
+
+  <!-- Description -->
+  <div>
+    <label for="description" class="block font-medium text-gray-700 mb-1">Description</label>
+    <textarea id="description" name="entry.390587969" rows="3" placeholder="Describe the incident in detail" required class="w-full border rounded focus:ring-2 focus:ring-indigo-500"></textarea>
+  </div>
+
+  <!-- Upload/Capture Section -->
+  <fieldset class="border p-3 rounded">
+    <legend class="font-medium text-gray-700 mb-1">Upload or Capture Image(s)</legend>
+    <div class="flex flex-wrap gap-2 mb-2">
+      <button type="button" id="uploadImageBtn" class="bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">Upload Image</button>
+      <button type="button" id="openCameraBtn" class="bg-green-600 text-white rounded hover:bg-green-700 transition">Take Photo</button>
+    </div>
+    <input type="file" id="uploadImages" name="uploadImages" accept="image/*" multiple style="display:none;">
+    <video id="camera" autoplay playsinline class="w-full rounded border mb-2"></video>
+    <canvas id="snapshot" style="display:none;"></canvas>
+    <div id="preview-container" class="grid grid-cols-2 gap-2 mb-2">
+      <img id="preview" src="" alt="Image preview" style="display:none;" class="rounded border" />
+    </div>
+    <div class="flex gap-2">
+      <button type="button" id="captureBtn" class="bg-gray-700 text-white rounded hover:bg-gray-800 transition">Capture Photo</button>
+      <button type="button" id="retakeBtn" style="display:none;" class="bg-gray-400 text-white rounded hover:bg-gray-500 transition">Retake</button>
+    </div>
+  </fieldset>
+
+  <!-- Hidden image input -->
+  <input type="hidden" id="imgUrlInput" name="entry.1031277114" value="">
+
+  <!-- Submit -->
+  <button type="submit" class="w-full bg-indigo-600 text-white rounded py-2 hover:bg-indigo-700 transition">Submit Incident</button>
+</form>
+
   </div>
 </div>
 
@@ -833,7 +874,7 @@ const usernameInput = document.getElementById("username");
       }
     }
 
-    const categoryCheckboxes = document.querySelectorAll('input[name="entry.1991846988"]:checked');
+    const categoryCheckboxes = document.querySelectorAll('input[name="entry.1980764601"]:checked');
 if (categoryCheckboxes.length === 0) {
   alert("Please select at least one category.");
   return;  // prevent submission
