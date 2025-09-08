@@ -560,18 +560,37 @@ img {
       </div>
 
       <!-- Categories -->
-      <fieldset id="categoryFieldset" required>
-        <legend>Category (select one):</legend>
-        <div>
-          <label><input type="radio" name="entry.1991846988" value="BVS"> BVS</label>
-          <label><input type="radio" name="entry.1991846988" value="Network"> Network / Service</label>
-          <label><input type="radio" name="entry.1991846988" value="Portal"> System / Portal</label>
-          <label><input type="radio" name="entry.1991846988" value="Weather"> Weather / Rain / Flood</label>
-          <label><input type="radio" name="entry.1991846988" value="PowerOutage"> Power Outage</label>
-          <label><input type="radio" name="entry.1991846988" value="LawandOrder"> Law & Order / Strikes</label>
-          <label><input type="radio" name="entry.1991846988" value="Other"> Other</label>
-        </div>
-      </fieldset>
+<fieldset id="categoryFieldset" required>
+  <legend>Category (select one):</legend>
+  <div>
+    <label><input type="radio" name="entry.1991846988" value="BVS" required> BVS</label>
+    <label><input type="radio" name="entry.1991846988" value="Network"> Network / Service</label>
+    <label><input type="radio" name="entry.1991846988" value="Portal"> System / Portal</label>
+    <label><input type="radio" name="entry.1991846988" value="Weather"> Weather / Rain / Flood</label>
+    <label><input type="radio" name="entry.1991846988" value="PowerOutage"> Power Outage</label>
+    <label><input type="radio" name="entry.1991846988" value="LawandOrder"> Law & Order / Strikes</label>
+    <label><input type="radio" name="entry.1991846988" value="Other"> Other</label>
+  </div>
+</fieldset>
+
+<!-- Date -->
+<div>
+  <label for="incidentDate" class="block font-medium text-gray-700 mb-1">Date</label>
+  <input type="date" id="incidentDate" name="entry.209055804" required aria-required="true" class="w-full border rounded focus:ring-2 focus:ring-indigo-500" />
+</div>
+
+<!-- Start Time -->
+<div>
+  <label for="startTime" class="block font-medium text-gray-700 mb-1">Start Time</label>
+  <input type="time" id="startTime" name="entry.2141061383" required aria-required="true" class="w-full border rounded focus:ring-2 focus:ring-indigo-500" />
+</div>
+
+<!-- End Time -->
+<div>
+  <label for="endTime" class="block font-medium text-gray-700 mb-1">End Time</label>
+  <input type="time" id="endTime" name="entry.194572695" required aria-required="true" class="w-full border rounded focus:ring-2 focus:ring-indigo-500" />
+</div>
+
 
       <!-- Description -->
       <div>
@@ -1122,5 +1141,6 @@ reportBtn.addEventListener("click", openModal);
 </body>
 
 </html>
+
 
 
